@@ -259,7 +259,7 @@ for (const pet of array) {
     <p>Type: ${pet.type}</p>
     <p>Color: ${pet.color}</p>
     <p>Special Skill: ${pet.specialSkill}</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
+    <a href="#" class="btn btn-primary delete" id="delete--${pet.id}">Delete</a>
   </div>
 </div>`
 }
@@ -292,21 +292,87 @@ filterContainer.addEventListener("click", (e) => {
   }
 })
 
-// filterContainer.addEventListener("click", (e) => {
-//   if (e.target.id === "dogs") {
-//   const dogPets = pets.filter((pet) => pet.type === "dog")
-//   cardsOnDom(dogPets);
-// }
-//   if (e.target.id === "cats") {
-//     console.log(e)
-//     const catPets = pets.filter((pet) => pet.type === "cat")
-//     cardsOnDom(catPets);
-// }
-//   if (e.target.id === "dinos") {
-//     const dinoPets = pets.filter((pet) => pet.type === "dino")
-//     cardsOnDom(dinoPets);
-// }
-//   if (e.target.id === "allPets") {
-//     cardsOnDom(pets);
-//   }
-// })
+const petForm = () => {
+  let domString = '';
+
+  domString += `
+  <div class="mb-3">
+    <label for="name" class="form-label">Name:</label>
+    <input type="text" class="form-control" id="name" 
+    aria-describedby="emailHelp">
+  </div>
+
+  <div class="mb-3">
+    <label for="color" class="form-label">Color:</label>
+    <input type="text" class="form-control" id="color" 
+    aria-describedby="emailHelp">
+  </div>
+
+  <div class="mb-3">
+    <label for="specialSkill" class="form-label">Special Skill:</label>
+    <input type="text" class="form-control" id="specialSkill" 
+    aria-describedby="emailHelp">
+  </div>
+
+  <div class="mb-3">
+    <label for="type" class="form-label">Type:</label>
+    <input type="text" class="form-control" id="type" 
+    aria-describedby="emailHelp">
+  </div>
+
+  <div class="mb-3">
+    <label for="imgUrl" class="form-label">Image Url:</label>
+    <input type="URL" class="form-control" id="imgUrl" 
+    aria-describedby="emailHelp">
+  </div>
+  <button type="submit" class=btn btn-primary">Submit</button>
+  `;
+
+    renderToDom("#form-container", domString)
+};
+
+const formButton = document.querySelector('#show-form-button')
+
+formButton.addEventListener("click", (event) => {
+  petForm()
+})
+
+const form = document.querySelector("form")
+
+const createPet = (e) => {
+  e.preventDefault()
+
+  const petObj = {
+    id: pets.length + 1,
+    name: document.querySelector("#name").value, 
+    color: document.querySelector("#color").value, 
+    specialSkill: document.querySelector("#specialSkill").value, 
+    type: document.querySelector("#type").value, 
+    imageUrl: document.querySelector("#imgUrl").value
+  }
+
+  pets.push(petObj)
+  cardsOnDom(pets)
+  form.reset()
+}
+
+form.addEventListener("submit", createPet)
+
+// Here we will be using event bubbling
+// 1. Target the app div
+
+const app = document.querySelector('#app');
+// 2. Add an event listener to capture clicks
+app.addEventListener('click', (e) => {
+
+    if (e.target.id.includes("delete")) {
+        const [, id] = e.target.id.split("--")
+        const index = pets.findIndex(e => e.id === Number(id));
+        pets.splice(index, 1);
+        cardsOnDom(pets);
+    }
+
+})
+// 3. check e.target.id includes "delete"
+// 4. add logic to remove from array
+// 5. Repaint the DOM with the updated array
